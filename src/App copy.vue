@@ -1,18 +1,55 @@
 <template>
-  <router-view v-slot="{ Component }">
-    <transition name="fade-button" mode="out-in">
-      <component :is="Component"></component>
+  <div class="container">
+    <users-list></users-list>
+  </div>
+  <div class="container">
+    <div class="block" :class="{ animate: animatedBlock }"></div>
+    <button @click="animateBlock">Animate</button>
+  </div>
+  <div class="container">
+    <!-- <transition enter-to-class="some-class" enter-active-class="some-class..."> -->
+    <transition name="para" appear
+                :css="false"
+                @before-enter="beforeEnter"
+                @before-leave="animationEvent($event, 'beforeLeave')"
+                @enter="enter"
+                @leave="leave"
+                @leave-cancelle="leaveCancelled"
+                @enter-cancelled="enterCancelled"
+                @after-leave="animationEvent($event, 'afterLeave')"
+                @after-enter="animationEvent($event, 'afterEnter')">
+                <!-- @before-enter="animationEvent($event, 'beforeEnter')"
+                @before-leave="animationEvent($event, 'beforeLeave')"
+                @enter="animationEvent($event, 'enter')"
+                @leave="animationEvent($event, 'leave')"
+                @after-leave="animationEvent($event, 'afterLeave')"
+                @after-enter="animationEvent($event, 'afterEnter')"> -->
+      <p v-if="paraIsVisible">This is only sometimes visible...</p>
     </transition>
-  </router-view>
+    <button @click="toggleParagraph">Toggle Paragraph</button>
+  </div>
+  <div class="container">
+    <transition name="fade-button" mode="out-in">
+      <button @click="showUsers" v-if="!usersAreVisible">Show Users</button>
+      <button @click="hideUsers" v-else>Hide Users</button>
+    </transition>
+  </div>
+  <base-modal @close="hideDialog" :open="dialogIsVisible">
+    <p>This is a test dialog!</p>
+    <button @click="hideDialog">Close it!</button>
+  </base-modal>
+  <div class="container">
+    <button @click="showDialog">Show Dialog</button>
+  </div>
 </template>
 
 <script>
-// import UsersList from './components/UsersList.vue';
+import UsersList from './components/UsersList.vue';
 
 export default {
-  // components: {
-  //   UsersList,
-  // },
+  components: {
+    UsersList,
+  },
   data() {
     return {
       animatedBlock: false,
@@ -198,16 +235,6 @@ button:active {
 .fade-button-enter-to,
 .fade-button-leave-from {
   opacity: 1;
-}
-
-.route-enter-from {}
-.route-enter-active {
-  animation: slide-scale .5s ease-out reverse;
-}
-.route-enter-to {}
-
-.route-leave-active {
-  animation: slide-scale .5s ease-in;
 }
 
 @keyframes slide-scale {
